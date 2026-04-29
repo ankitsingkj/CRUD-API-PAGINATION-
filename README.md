@@ -123,6 +123,105 @@ GET /api/users?page=1&limit=10
 
 JWT token is required for protected routes.
 
-Example header:
+Example header:  ## 🆕 Latest Updates (Today)
+
+The following enhancements and improvements were added to the project:
+
+### ✅ Validation Added
+
+* Field validation implemented for:
+
+  * Name
+  * Email
+  * Password
+  * Contact
+* Proper error messages returned for missing or invalid fields.
+* Status codes used:
+
+  * `400` for validation errors
+  * `404` for not found
+  * `500` for server errors
+
+### 🗑️ Deleted Users Collection
+
+* Implemented a separate collection to store deleted users.
+* When a user is deleted:
+
+  * User data is first saved into `deletedUsers` collection.
+  * Then removed from the main `users` collection.
+* Helps maintain data history and recovery.
+
+### 🔐 Token Management
+
+* Token handling improved for authentication and testing.
+* Token-related data stored in a dedicated collection.
+* Secure JWT verification added using middleware.
+
+### 📄 Pagination Enhancements
+
+* Pagination optimized for large datasets.
+* Added query parameters:
+
+  * `page`
+  * `limit`
+  * `search`
+  * `filter`
+* Response now includes:
+
+  * `total`
+  * `page`
+  * `limit`
+  * `totalPages`
+
+### 📧 Email Service Improvements
+
+* Email sending verified using Nodemailer.
+* Preview URL generated for testing emails.
+* Group email sending functionality stabilized.
+
+### 🧪 Bulk User Insert
+
+* Script added to insert large datasets.
+* Example:
+
+  * Add 1000 users automatically.
+* Useful for testing pagination and performance.
+
+### 🛡️ Error Handling
+
+* Improved error handling using try-catch blocks.
+* Consistent JSON error responses implemented.
+
+### 🔧 Git & Version Control
+
+* Repository synchronized with GitHub.
+* Proper workflow followed:
+
+  * `git pull --rebase`
+  * `git push`
+* Commit history maintained for updates.
+
+### 📦 Project Stability Improvements
+
+* MongoDB connection verified.
+* Environment variables properly configured.
+* Server startup logs improved.
+
+---
+
+## 🚀 Current Project Status
+
+* CRUD Operations — Completed
+* JWT Authentication — Completed
+* Pagination — Completed
+* Email Service — Completed
+* Validation — Completed
+* Deleted User Backup — Completed
+* Bulk Insert — Completed
+* GitHub Integration — Completed
+
+Project is now **production-ready backend API** for learning and deployment.
+
 
 Authorization: Bearer your_token_here
+ 
