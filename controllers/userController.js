@@ -1,41 +1,82 @@
-
-
 const User = require("../models/userModel");
-
 
 // CREATE
 const createUser = async (req, res) => {
-  const user = await User.create(req.body);
-  res.json(user);
+  try {
+    const { name, email, password, contact } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        message: "Name is required"
+      });
+    }
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required"
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        message: "Password is required"
+      });
+    }
+
+    if (!contact) {
+      return res.status(400).json({
+        message: "Contact is required"
+      });
+    }
+
+    const user = await User.create(req.body);
+
+    // ✅ 201 Created
+    res.status(201).json({
+      message: "User created successfully",
+      user
+    });
+
+  } catch (error) {
+    // ❌ 500 Server Error
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
-
-
-// READ ALL
-// const getUsers = async (req, res) => {
-//   const users = await User.find();
-//   res.json(users);
-// };
 
 // READ ALL WITH PAGINATION
 const getUsers = async (req, res) => {
   try {
-    // page aur limit lena
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    // skip calculate
     const skip = (page - 1) * limit;
 
-    // database se limited data lana
-    const users = await User.find()
+    const { name, email, contact } = req.query;
+
+    let filter = {};
+
+    if (name) {
+      filter.name = { $regex: name, $options: "i" };
+    }
+
+    if (email) {
+      filter.email = { $regex: email, $options: "i" };
+    }
+
+    if (contact) {
+      filter.contact = contact;
+    }
+
+    const users = await User.find(filter)
       .skip(skip)
       .limit(limit);
 
-    // total users count
-    const total = await User.countDocuments();
+    const total = await User.countDocuments(filter);
 
-    // response bhejna
-    res.json({
+    // ✅ 200 OK
+    res.status(200).json({
       total,
       page,
       limit,
@@ -50,30 +91,108 @@ const getUsers = async (req, res) => {
   }
 };
 
-
 // READ ONE
 const getUser = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  res.json(user);
-};
+  try {
+    const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({
+        message: "User ID is required"
+      });
+    }
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // ✅ 200 OK
+    res.status(200).json(user);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
 
 // UPDATE
 const updateUser = async (req, res) => {
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
+  try {
+    const { id } = req.params;
 
-  res.json(user);
+    if (!id) {
+      return res.status(400).json({
+        message: "User ID is required"
+      });
+    }
+
+    if (
+      !req.body.name &&
+      !req.body.email &&
+      !req.body.password &&
+      !req.body.contact
+    ) {
+      return res.status(400).json({
+        message: "At least one field is required to update"
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      req.body,
+      { returnDocument: "after" }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // ✅ 200 OK
+    res.status(200).json(user);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
-
 
 // DELETE
 const deleteUser = async (req, res) => {
-  await User.findByIdAndDelete(req.params.id);
-  res.json({ message: "User Deleted" });
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "User ID is required"
+      });
+    }
+
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // ✅ 200 OK
+    res.status(200).json({
+      message: "User Deleted"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
 };
 
 module.exports = {
@@ -83,7 +202,3 @@ module.exports = {
   updateUser,
   deleteUser
 };
-
-
-
-

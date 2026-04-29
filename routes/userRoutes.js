@@ -4,13 +4,7 @@ const addThousandUsers = require("../controllers/addThousandUsers");
 router.post("/add-1000-users", addThousandUsers);
 
 
-const {
-  createUser,
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser
-} = require("../controllers/userController");
+const { createUser,getUsers,getUser,updateUser, deleteUser} = require("../controllers/userController");
 
 router.post("/users", createUser);
 
